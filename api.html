@@ -1,0 +1,766 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f4f6fb" />
+    <title>Python Canvas Studio API Reference</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        color: #172033;
+        background: #f4f6fb;
+        font-synthesis: none;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        --muted: #68748a;
+        --border: #e1e6ef;
+        --surface: #ffffff;
+        --accent: #5b56e8;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-width: 320px;
+        min-height: 100vh;
+        margin: 0;
+        padding: 38px 24px 56px;
+      }
+
+      a {
+        color: #514bd0;
+      }
+
+      .app {
+        width: min(100%, 1060px);
+        margin: 0 auto;
+      }
+
+      .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 24px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 42px;
+        height: 42px;
+        place-items: center;
+        border-radius: 13px;
+        background: #e9e8ff;
+        color: var(--accent);
+      }
+
+      .brand-mark svg {
+        width: 22px;
+        height: 22px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 22px;
+        letter-spacing: -0.035em;
+      }
+
+      .subtitle {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .intro,
+      .api-section {
+        margin-bottom: 20px;
+        padding: 22px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--surface);
+        box-shadow: 0 8px 24px rgb(31 44 73 / 4%);
+      }
+
+      .intro p {
+        margin: 0;
+        color: #59657b;
+        font-size: 14px;
+        line-height: 1.65;
+      }
+
+      .api-search {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 12px;
+        margin-top: 16px;
+      }
+
+      .api-search input {
+        width: 100%;
+        min-height: 42px;
+        padding: 9px 12px;
+        border: 1px solid #d9deea;
+        border-radius: 8px;
+        background: #fff;
+        color: #172033;
+        font: inherit;
+        font-size: 14px;
+      }
+
+      .api-search input:focus-visible {
+        outline: 3px solid rgb(91 86 232 / 20%);
+        border-color: #aaa7f4;
+      }
+
+      .search-count {
+        min-width: 100px;
+        color: var(--muted);
+        font-size: 12px;
+        text-align: right;
+      }
+
+      .no-results {
+        margin: 0;
+        padding: 17px;
+        border: 1px dashed #d9deea;
+        border-radius: 10px;
+        color: var(--muted);
+        font-size: 13px;
+        text-align: center;
+      }
+
+      .api-section h2 {
+        margin: 0 0 16px;
+        color: #364156;
+        font-size: 16px;
+      }
+
+      .api-list {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+      }
+
+      .api-entry {
+        min-width: 0;
+        padding: 15px;
+        border: 1px solid #e8ebf2;
+        border-radius: 10px;
+        background: #fcfcfe;
+      }
+
+      .api-entry h3 {
+        margin: 0 0 8px;
+        font-size: 14px;
+      }
+
+      code,
+      pre {
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      }
+
+      .signature {
+        display: block;
+        overflow-x: auto;
+        margin: 0 0 9px;
+        padding: 8px 9px;
+        border-radius: 7px;
+        background: #f1f2f8;
+        color: #514bd0;
+        font-size: 12px;
+        white-space: pre;
+      }
+
+      .api-entry p {
+        margin: 0;
+        color: #59657b;
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      .api-entry p + p {
+        margin-top: 7px;
+      }
+
+      .example {
+        margin: 0;
+        padding: 15px;
+        overflow-x: auto;
+        border-radius: 9px;
+        background: #20283a;
+        color: #f1f4fb;
+        font-size: 12px;
+        line-height: 1.65;
+        tab-size: 4;
+      }
+
+      @media (max-width: 640px) {
+        body {
+          padding: 24px 14px 36px;
+        }
+
+        .page-header {
+          align-items: flex-start;
+        }
+
+        .intro,
+        .api-section {
+          padding: 17px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <header class="page-header">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M7.4 5.5 2.9 12l4.5 6.5M16.6 5.5l4.5 6.5-4.5 6.5M14 3.5l-4 17"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+              />
+            </svg>
+          </div>
+          <div>
+            <h1>API Reference</h1>
+            <p class="subtitle">Python Canvas Studio library</p>
+          </div>
+        </div>
+      </header>
+
+      <section class="intro" aria-label="About the API">
+        <p>
+          Import the browser-provided library with
+          <code>import canvas_studio as studio</code>, then call drawing and
+          utility functions as <code>studio.function_name(...)</code>. Register
+          optional lifecycle and input callbacks with <code>studio.start()</code>;
+          read input values such as <code>studio.key</code> from the module.
+          Use these APIs in the studio’s Python editor or with the standalone
+          desktop module. For desktop use, install
+          <code>python -m pip install -r requirements-desktop.txt</code> and
+          run a Python file from this folder. The desktop
+          <code>studio.start()</code> owns the Pygame event loop and returns
+          when its window closes. Asset paths may be bare filenames or paths
+          under <code>images/</code> and <code>sounds/</code>; exported desktop
+          projects resolve those folders alongside the module even when run
+          from another working directory.
+          The studio’s Export ZIP includes the project, desktop module,
+          dependency list, message server, and any added image or sound assets.
+          Existing programs that use the former global helpers and callback
+          names remain supported for compatibility.
+          Coordinates and sizes are measured in canvas pixels from the
+          top-left. Optional arguments are shown with their defaults. Entries
+          are sorted alphabetically within each category.
+          For the shape helpers other than <code>circle()</code>,
+          <code>origin=(x, y)</code> is a normalized position from
+          <code>(0.0, 0.0)</code> at the bounds' top-left to
+          <code>(1.0, 1.0)</code> at the bottom-right. When set on a helper
+          with <code>x, y</code> arguments, that point in the shape is placed at
+          <code>(x, y)</code>; if <code>rotate</code> is also set, it rotates
+          around that same point. The default is <code>(0, 0)</code> (the
+          top-left). Values must be between 0.0 and 1.0.
+          <code>circle()</code> retains its <code>rotation_origin</code>
+          rotation-only argument. Angles are clockwise and default to degrees.
+        </p>
+        <div class="api-search">
+          <input
+            id="api-search"
+            type="search"
+            aria-label="Search API reference"
+            placeholder="Search functions, callbacks, and values"
+            autocomplete="off"
+          />
+          <output class="search-count" id="search-count" aria-live="polite"></output>
+        </div>
+      </section>
+
+      <section class="api-section" aria-labelledby="start-heading">
+        <h2 id="start-heading">Starting a program</h2>
+        <div class="api-list">
+          <article class="api-entry">
+            <h3><code>start</code></h3>
+            <code class="signature">studio.start(draw=None, *, update=None, setup=None, mousePressed=None, mouseReleased=None, keyPressed=None, keyReleased=None)</code>
+            <p>Register callbacks after defining them. <code>setup</code> runs once when <code>start()</code> is called. If <code>draw</code> or <code>update</code> is registered, they run every display-paced frame, with <code>update</code> first. Input callbacks run for their corresponding canvas events. All callbacks are optional. The browser drives its animation loop; the desktop Pygame version runs its window loop until the window closes.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>init</code></h3>
+            <code class="signature">studio.init(draw=None, *, update=None, setup=None, mousePressed=None, mouseReleased=None, keyPressed=None, keyReleased=None)</code>
+            <p>Backward-compatible alias for <code>studio.start()</code>.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="api-section" aria-labelledby="processing-heading">
+        <h2 id="processing-heading">Processing-style drawing</h2>
+        <div class="api-list">
+          <article class="api-entry">
+            <h3><code>processing_simulator</code></h3>
+            <code class="signature">import processing_simulator as p</code>
+            <p>
+              This helper maps a core Processing-style 2D API to
+              <code>canvas_studio</code> for browser and desktop projects. It
+              includes <code>size()</code>, <code>background()</code>,
+              <code>mouseX</code>, <code>mouseY</code>, <code>width</code>,
+              <code>height</code>, <code>fill()</code>, <code>noFill()</code>,
+              <code>stroke()</code>,
+              <code>noStroke()</code>, <code>strokeWeight()</code>,
+              <code>rectMode()</code>, <code>rect()</code>,
+              <code>square()</code>, <code>ellipseMode()</code>,
+              <code>ellipse()</code>,
+              <code>circle()</code>, <code>line()</code>, <code>point()</code>,
+              <code>triangle()</code>, <code>quad()</code>, <code>text()</code>,
+              and <code>textSize()</code>. Rectangles use a top-left position;
+              by default, ellipses and circles use a center position.
+              <code>circle(x, y, diameter)</code> takes a diameter, while
+              <code>canvas_studio.circle()</code> takes a radius.
+              <code>rectMode()</code> supports <code>CORNER</code>,
+              <code>CORNERS</code>, <code>CENTER</code>, and
+              <code>RADIUS</code>; <code>ellipseMode()</code> supports the same
+              constants. Colors accept a
+              named or hexadecimal color string (<code>#RGB</code>,
+              <code>#RGBA</code>, <code>#RRGGBB</code>, or
+              <code>#RRGGBBAA</code>) or grayscale, grayscale-alpha, RGB, and
+              RGBA components; numeric channels are rounded and clamped to
+              0–255. Fill, stroke, stroke width, and text size remain active
+              until changed. <code>width</code> and <code>height</code> report
+              the current canvas dimensions. Unlike ordinary imported values,
+              <code>mouseX</code>, <code>mouseY</code>, <code>width</code>, and
+              <code>height</code> are live numeric-like values, so they also
+              work with
+              <code>from processing_simulator import *</code>.
+            </p>
+            <pre><code>import processing_simulator as p
+
+def setup():
+    p.size(600, 300)
+
+def draw():
+    p.background(255)
+    p.fill(255, 0, 0)
+    p.noStroke()
+    p.circle(p.mouseX, p.mouseY, 40)
+
+# Start explicitly for desktop; the browser also supports this call.
+p.start(draw, setup=setup)</code></pre>
+            <pre><code>from processing_simulator import *
+
+def draw():
+    background(240)
+    circle(mouseX, mouseY, 40)</code></pre>
+            <p>
+              The helper is included in exported desktop ZIPs and generated
+              viewer pages. On desktop, call <code>p.start()</code> with your
+              callbacks. In the browser, you may also omit it and use the
+              editor's automatic global callback registration.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="api-section" aria-labelledby="canvas-heading">
+        <h2 id="canvas-heading">Canvas and drawing</h2>
+        <div class="api-list">
+          <article class="api-entry">
+            <h3><code>clear</code></h3>
+            <code class="signature">studio.clear(color="#ffffff")</code>
+            <p>Fill the entire canvas with the given color.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>background</code></h3>
+            <code class="signature">studio.background(color)</code>
+            <p>Alias for <code>clear(color)</code>.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>rect</code></h3>
+            <code class="signature">studio.rect(x, y, width, height, fill="#5b56e8", stroke="#000", *, stroke_width=1, origin=(0, 0), rotate=None, angle_unit="degrees")</code>
+            <p>Draw a rectangle with separate fill and stroke colors. Set either color to <code>None</code> to omit it, or set <code>stroke_width</code> to control the outline thickness in pixels. By default, <code>(x, y)</code> is its top-left corner. Set <code>origin=(0.5, 0.5)</code> to place its center at <code>(x, y)</code>; if <code>rotate</code> is set, it rotates around that point.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>circle</code></h3>
+            <code class="signature">studio.circle(x, y, radius, fill="#f6c85f", stroke="#000", *, stroke_width=1, rotation_origin=None, rotate=None, angle_unit="degrees")</code>
+            <p>Draw an anti-aliased circle with separate fill and stroke colors, centered at <code>(x, y)</code>. Set either color to <code>None</code> to omit it, or set <code>stroke_width</code> to control outline thickness in pixels. Use normalized coordinates for <code>rotation_origin</code>; <code>(0.5, 0.5)</code> is its center.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>ellipse</code></h3>
+            <code class="signature">studio.ellipse(x, y, width, height, fill="#f6c85f", stroke="#000", *, stroke_width=1, origin=(0, 0), rotate=None, angle_unit="degrees")</code>
+            <p>Draw an anti-aliased ellipse with separate fill and stroke colors, with its bounding box's top-left at <code>(x, y)</code> by default. Set either color to <code>None</code> to omit it, or set <code>stroke_width</code> to control outline thickness in pixels. Set <code>origin=(0.5, 0.5)</code> to place its center at <code>(x, y)</code>; if <code>rotate</code> is set, it rotates around that point.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>arc</code></h3>
+            <code class="signature">studio.arc(x, y, radius, start_angle, end_angle, stroke="#000", width=2, *, origin=(0, 0), rotate=None, angle_unit="degrees")</code>
+            <p>Draw a stroked arc with the diameter bounds' top-left at <code>(x, y)</code> by default. <code>width</code> controls stroke thickness in pixels. Set <code>stroke=None</code> to omit it. Set <code>origin=(0.5, 0.5)</code> to center it at <code>(x, y)</code>. Arc angles increase clockwise; if <code>rotate</code> is set, the arc rotates around its origin point.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>polygon</code></h3>
+            <code class="signature">studio.polygon(points, fill="#5b56e8", stroke="#000", *, stroke_width=1, x=None, y=None, origin=(0, 0), rotate=None, angle_unit="degrees")</code>
+            <p>Draw a polygon with separate fill and stroke colors from at least three <code>(x, y)</code> point pairs. Set either color to <code>None</code> to omit it, or set <code>stroke_width</code> to control outline thickness in pixels. Points stay at their supplied positions unless both optional <code>x</code> and <code>y</code> are given; then the default <code>origin=(0, 0)</code> (the bounding box's top-left) or the selected normalized origin is placed at that position. If <code>rotate</code> is set, the polygon rotates around that point.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>line</code></h3>
+            <code class="signature">studio.line(x1, y1, x2, y2, stroke="#000", width=2)</code>
+            <p>Draw a line between the two endpoint coordinates. <code>width</code> controls stroke thickness in pixels; set <code>stroke=None</code> to omit it.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>text</code></h3>
+            <code class="signature">studio.text(value, x, y, size=20, color="#253149", align="left", *, stroke=None, stroke_width=1, origin=(0, 0), rotate=None, angle_unit="degrees")</code>
+            <p>Draw the string representation of <code>value</code> using its measured bounding box. Set <code>color=None</code> to omit the fill while retaining an optional outline; set <code>stroke</code> to a color to outline the text, and <code>stroke_width</code> to control outline thickness in pixels. Both fill and outline can be omitted by setting <code>color=None</code> and <code>stroke=None</code>. Set <code>align</code> to <code>"left"</code>, <code>"center"</code>, or <code>"right"</code> to align each line. The default <code>origin=(0, 0)</code> anchors the measured bounds' top-left at <code>(x, y)</code>; if <code>rotate</code> is set, the text rotates around that point. Newline characters (<code>\n</code>) start a new line below the previous line.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="api-section" aria-labelledby="size-heading">
+        <h2 id="size-heading">Canvas size and transforms</h2>
+        <div class="api-list">
+          <article class="api-entry">
+            <h3><code>set_canvas_size</code></h3>
+            <code class="signature">studio.set_canvas_size(width, height)</code>
+            <p>Set the canvas pixel dimensions. Both values must be positive integers.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>get_canvas_width</code></h3>
+            <code class="signature">studio.get_canvas_width()</code>
+            <p>Return the current canvas width in pixels.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>get_canvas_height</code></h3>
+            <code class="signature">studio.get_canvas_height()</code>
+            <p>Return the current canvas height in pixels.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>translate</code></h3>
+            <code class="signature">studio.translate(x, y)</code>
+            <p>Move the origin for subsequent drawing operations by the given offset. Combine with <code>rotate()</code> and <code>scale()</code> to transform a group of shapes with one shared transform; this avoids setting up a separate rotation for each shape. Use <code>reset_transform()</code> afterward to restore the default transform.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>rotate</code></h3>
+            <code class="signature">studio.rotate(angle, angle_unit="degrees")</code>
+            <p>Rotate subsequent drawing clockwise. The angle unit may be <code>"degrees"</code> or <code>"radians"</code>. For a group of shapes that share an angle and pivot, apply the rotation once with <code>translate()</code> and draw the shapes under that shared transform instead of passing <code>origin</code> and <code>rotate</code> to every shape.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>scale</code></h3>
+            <code class="signature">studio.scale(x, y=None)</code>
+            <p>Scale subsequent drawing horizontally by <code>x</code> and vertically by <code>y</code>. If <code>y</code> is omitted, both axes use <code>x</code>. Scaling, like translation and rotation, remains in effect for following shapes until <code>reset_transform()</code>; combine transforms once when drawing a group that shares them.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>reset_transform</code></h3>
+            <code class="signature">studio.reset_transform()</code>
+            <p>Reset translation, rotation, and scaling to their defaults.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>hide_mouse_pointer</code></h3>
+            <code class="signature">studio.hide_mouse_pointer()</code>
+            <p>Hide the mouse pointer while it is over the canvas. The pointer remains visible outside the canvas.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>show_mouse_pointer</code></h3>
+            <code class="signature">studio.show_mouse_pointer()</code>
+            <p>Show the mouse pointer while it is over the canvas.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="api-section" aria-labelledby="channels-heading">
+        <h2 id="channels-heading">Messaging between browser and desktop</h2>
+        <div class="api-list">
+          <article class="api-entry">
+            <h3><code>connect</code></h3>
+            <code class="signature">studio.connect(host, port, *, secure=False) -&gt; CanvasConnection</code>
+            <p>Connect to the relay at <code>host:port</code>. The same port is used as the virtual service port registered by <code>net_listen</code>, so it is also the relay’s WebSocket listening port. Returns immediately; messages sent before the relay completes the connection are queued. Use <code>connection.on_message(callback)</code> to receive peer messages. Use <code>secure=True</code> when the relay endpoint is <code>wss://</code>.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>net_listen</code> (web runtime)</h3>
+            <code class="signature">studio.net_listen(port, on_connected, *, relay_host="127.0.0.1", secure=False) -&gt; CanvasListener</code>
+            <p>Register the virtual service on a relay running at <code>relay_host:port</code>. The same port is used by the real WebSocket relay; no extra relay port setting is needed. This does not bind an additional TCP port or expose the browser’s local IP address. By default the listener connects to a relay running on the same computer; remote clients pass the relay computer’s reachable hostname or IP to <code>connect</code>. A relay permits only one listener per virtual port at a time.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>CanvasConnection.on_message</code></h3>
+            <code class="signature">connection.on_message(callback)</code>
+            <p>Set the callback invoked with each JSON-decoded message from the paired peer. For accepted connections, register the callback inside <code>on_connected</code>. The connection’s relay-observed remote address and port are available in that callback.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>CanvasConnection.get_remote_address</code></h3>
+            <code class="signature">connection.get_remote_address()</code>
+            <p>Return the paired peer’s IP address as observed by the relay, or <code>None</code> until the virtual connection is established.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>CanvasConnection.get_remote_port</code></h3>
+            <code class="signature">connection.get_remote_port()</code>
+            <p>Return the paired peer’s source port as observed by the relay, or <code>None</code> until the virtual connection is established. These values describe the peer’s WebSocket endpoint as seen by the relay; NAT, proxies, and browser networking can affect them, and they are not a direct TCP connection between peers.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>open_channel</code></h3>
+            <code class="signature">studio.open_channel(name, on_message)</code>
+            <p>Open a local browser <code>BroadcastChannel</code> shared with tabs on the same origin. Use <code>studio.net_listen()</code> and <code>studio.connect()</code> for paired network connections. Older named-channel programs that pass <code>server=...</code> remain supported for compatibility.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>connect_broadcast</code></h3>
+            <code class="signature">studio.connect_broadcast(host, port, on_message, secure=False) -&gt; CanvasChannel</code>
+            <p>Connect to the legacy relay broadcast service, which delivers each message to every other broadcast client. Use virtual connections for new applications.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>CanvasConnection.send</code></h3>
+            <code class="signature">connection.send(message)</code>
+            <p>Send a JSON-serializable value to the one peer paired with this connection.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>connection.close</code></h3>
+            <code class="signature">connection.close()</code>
+            <p>Close the virtual connection. A listener and its accepted connections are also closed when the program stops.</p>
+          </article>
+          <article class="api-entry">
+            <h3>Virtual server example</h3>
+            <pre><code>import canvas_studio as studio
+
+def connected(connection):
+    print("Client address:", connection.get_remote_address())
+    print("Client port:", connection.get_remote_port())
+    connection.on_message(lambda message: print("Client:", message))
+    connection.send({"text": "Connected"})
+
+listener = studio.net_listen(8766, connected)</code></pre>
+          </article>
+          <article class="api-entry">
+            <h3>Virtual client example</h3>
+            <pre><code>import canvas_studio as studio
+
+connection = studio.connect("192.168.1.20", 8766)
+connection.on_message(lambda message: print("Server:", message))
+connection.send({"text": "Hello"})</code></pre>
+          </article>
+        </div>
+        <p>
+          Start the relay on a reachable computer. Install its dependency with
+          <code>python -m pip install -r requirements-server.txt</code>, then run
+          <code>python canvas_studio_server.py --host 0.0.0.0 --port 8766</code>.
+          Allow the port through that computer’s firewall. Desktop clients also
+          need <code>python -m pip install -r requirements-desktop.txt</code>.
+          Use the server computer’s LAN IP address (not <code>127.0.0.1</code>
+          on other computers). This basic relay has no authentication or
+          encryption; use it only on a trusted network unless protected by a
+          secure, authenticated WebSocket proxy.
+        </p>
+        <pre><code># Legacy broadcast example. For point-to-point communication, use
+# net_listen(port, on_connected) and connect(relay_host, port).
+import canvas_studio as studio
+
+SERVER_HOST = "192.168.1.20"
+SERVER_PORT = 8766
+
+def received(message):
+    print("Received:", message)
+
+connection = studio.connect_broadcast(SERVER_HOST, SERVER_PORT, received)
+
+# Sender callback; use this in either runtime to send a message.
+def mousePressed():
+    connection.send({"text": "Hello from another program!"})
+
+studio.start(mousePressed=mousePressed)</code></pre>
+        <p>
+  For local communication between browser tabs only, use
+  <code>studio.open_channel(name, on_message)</code>; both tabs must
+  share the same origin.
+  A browser page served over HTTPS needs a secure <code>wss://</code>
+  server endpoint.
+</p>
+      </section>
+
+      <section class="api-section" aria-labelledby="image-heading">
+        <h2 id="image-heading">Images</h2>
+        <div class="api-list">
+          <article class="api-entry">
+            <h3><code>load_image</code></h3>
+            <code class="signature">studio.load_image(name)</code>
+            <p>Load an image by filename from the Added Images gallery. Add the image to the project first.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>image</code></h3>
+            <code class="signature">studio.image(image_object, x, y, w, h, *, origin=(0, 0), rotate=None, angle_unit="degrees")</code>
+            <p>Draw a loaded image with its top-left at <code>(x, y)</code> by default, scaled to width <code>w</code> and height <code>h</code>. Set <code>origin=(0.5, 0.5)</code> to place its center at <code>(x, y)</code>; if <code>rotate</code> is set, it rotates around that point.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="api-section" aria-labelledby="sound-heading">
+        <h2 id="sound-heading">Sounds</h2>
+        <div class="api-list">
+          <article class="api-entry">
+            <h3><code>load_sound</code></h3>
+            <code class="signature">studio.load_sound(name)</code>
+            <p>Load a sound by filename from the Added Sounds gallery. Add the sound to the project first.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>play_sound</code></h3>
+            <code class="signature">studio.play_sound(sound)</code>
+            <p>Play or resume a sound returned by <code>load_sound()</code>. Browsers may require the user to interact with the page before playback; call this from a mouse or keyboard callback to satisfy that requirement.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>pause_sound</code></h3>
+            <code class="signature">studio.pause_sound(sound)</code>
+            <p>Pause a sound returned by <code>load_sound()</code>. Use <code>play_sound()</code> to resume it.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>stop_sound</code></h3>
+            <code class="signature">studio.stop_sound(sound)</code>
+            <p>Stop a sound returned by <code>load_sound()</code> and reset its position to the beginning, so the next <code>play_sound()</code> starts from the beginning.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="api-section" aria-labelledby="callbacks-heading">
+        <h2 id="callbacks-heading">Frame callbacks</h2>
+        <div class="api-list">
+          <article class="api-entry">
+            <h3><code>update</code></h3>
+            <code class="signature">studio.start(draw, update=update)</code>
+            <p>Pass the optional game-logic callback as <code>update</code> to <code>studio.start()</code>; it runs before <code>draw()</code> on each display-paced frame.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>draw</code></h3>
+            <code class="signature">studio.start(draw)</code>
+            <p>Pass the drawing callback to <code>studio.start()</code> to invoke it on each display-paced animation frame. When both frame callbacks exist, <code>update()</code> runs first.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="api-section" aria-labelledby="input-heading">
+        <h2 id="input-heading">Input callbacks and values</h2>
+        <div class="api-list">
+          <article class="api-entry">
+            <h3><code>mousePressed</code></h3>
+            <code class="signature">studio.start(draw, mousePressed=mousePressed)</code>
+            <p>Pass this optional callback to <code>studio.start()</code> to handle a mouse button press on the canvas. Read <code>studio.button</code> during the callback for the button number: <code>0</code> is primary, <code>1</code> is middle, and <code>2</code> is secondary.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>mouseReleased</code></h3>
+            <code class="signature">studio.start(draw, mouseReleased=mouseReleased)</code>
+            <p>Pass this optional callback to <code>studio.start()</code> to handle a mouse button release. Read <code>studio.button</code> during the callback for the button number: <code>0</code> is primary, <code>1</code> is middle, and <code>2</code> is secondary.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>button</code></h3>
+            <code class="signature">studio.button</code>
+            <p>Mouse button number for the most recent mouse callback: <code>0</code> is primary, <code>1</code> is middle, and <code>2</code> is secondary. This follows the browser's <code>MouseEvent.button</code> numbering.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>keyPressed</code></h3>
+            <code class="signature">studio.start(draw, keyPressed=keyPressed)</code>
+            <p>Pass this optional callback to <code>studio.start()</code> to handle a key press while the canvas is focused. Holding a key does not repeat this callback.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>keyReleased</code></h3>
+            <code class="signature">studio.start(draw, keyReleased=keyReleased)</code>
+            <p>Pass this optional callback to <code>studio.start()</code> to handle a key release while the canvas is focused.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>mouse_x</code> and <code>mouse_y</code></h3>
+            <code class="signature">studio.mouse_x
+studio.mouse_y</code>
+            <p>Current pointer coordinates in canvas pixels. The origin is at the canvas’s top-left.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>key</code></h3>
+            <code class="signature">studio.key</code>
+            <p>String value of the most recent keyboard event, such as <code>"Enter"</code> or <code>"a"</code>.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>key_code</code></h3>
+            <code class="signature">studio.key_code</code>
+            <p>Numeric key code for the most recent keyboard event; Enter is typically <code>13</code>.</p>
+          </article>
+          <article class="api-entry">
+            <h3><code>key_code_name</code></h3>
+            <code class="signature">studio.key_code_name</code>
+            <p>Physical key identifier, such as <code>"ShiftLeft"</code> or <code>"ShiftRight"</code>.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="api-section" aria-labelledby="example-heading">
+        <h2 id="example-heading">Example</h2>
+        <pre class="example"><code>import canvas_studio as studio
+
+studio.set_canvas_size(800, 500)
+player_x = 400
+
+def update():
+    global player_x
+    if studio.key == "ArrowLeft":
+        player_x -= 4
+    if studio.key == "ArrowRight":
+        player_x += 4
+
+def draw():
+    studio.clear("#ffffff")
+    studio.circle(player_x, 250, 24, "#5b56e8")
+
+studio.start(draw, update=update)</code></pre>
+      </section>
+    </main>
+    <script>
+      (() => {
+        const searchInput = document.getElementById("api-search");
+        const searchCount = document.getElementById("search-count");
+        const sections = Array.from(document.querySelectorAll(".api-section"))
+          .filter((section) => !section.querySelector(".example"));
+        const entries = sections.flatMap((section) => {
+          const list = section.querySelector(".api-list");
+          const sortedEntries = Array.from(list.querySelectorAll(".api-entry"))
+            .sort((left, right) =>
+              left.querySelector("h3").textContent.trim().toLowerCase().localeCompare(
+                right.querySelector("h3").textContent.trim().toLowerCase(),
+              ),
+            );
+          list.replaceChildren(...sortedEntries);
+          return sortedEntries.map((entry) => ({ entry, section }));
+        });
+        const noResults = document.createElement("p");
+        noResults.className = "no-results";
+        noResults.textContent = "No API entries match your search.";
+        noResults.hidden = true;
+        sections[0].before(noResults);
+
+        searchInput.addEventListener("input", () => {
+          const query = searchInput.value.trim().toLowerCase();
+          let visibleCount = 0;
+          const visibleBySection = new Map(sections.map((section) => [section, 0]));
+
+          for (const { entry, section } of entries) {
+            const matches = !query || entry.textContent.toLowerCase().includes(query);
+            entry.hidden = !matches;
+            if (matches) {
+              visibleCount += 1;
+              visibleBySection.set(section, visibleBySection.get(section) + 1);
+            }
+          }
+
+          for (const section of sections) {
+            section.hidden = visibleBySection.get(section) === 0;
+          }
+          noResults.hidden = visibleCount !== 0;
+          searchCount.textContent = query
+            ? `${visibleCount} ${visibleCount === 1 ? "result" : "results"}`
+            : `${visibleCount} entries`;
+        });
+
+        searchInput.dispatchEvent(new Event("input"));
+      })();
+    </script>
+  </body>
+</html>
