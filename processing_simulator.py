@@ -1,6 +1,7 @@
 """Processing-style drawing helpers backed by Python Canvas Studio."""
 
 from numbers import Real
+import time
 
 import canvas_studio as studio
 
@@ -15,6 +16,7 @@ __all__ = (
     "ellipseMode",
     "fill",
     "line",
+    "millis",
     "mouseX",
     "mouseY",
     "noFill",
@@ -46,6 +48,7 @@ _stroke_weight = 1
 _text_size = 12
 _rect_mode = CORNER
 _ellipse_mode = CENTER
+_started_at = time.monotonic()
 
 
 class _LiveValue:
@@ -197,6 +200,11 @@ def __getattr__(name):
 def size(width, height):
     """Set the canvas dimensions."""
     studio.set_canvas_size(_number(width), _number(height))
+
+
+def millis():
+    """Return elapsed milliseconds since the sketch started."""
+    return int((time.monotonic() - _started_at) * 1000)
 
 
 def background(*components):
@@ -405,6 +413,8 @@ def start(
     keyReleased=None,
 ):
     """Start the canvas and register Processing-style callbacks."""
+    global _started_at
+    _started_at = time.monotonic()
     studio.start(
         draw,
         update=update,
