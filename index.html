@@ -2113,6 +2113,11 @@ studio.start(draw)
             description:
               "Set the color for subsequent shapes and text using grayscale, RGB/RGBA values, or a CSS color string.",
           },
+          image: {
+            signature: "image(image_object, x, y, image_width=None, image_height=None)",
+            description:
+              "Draw a loaded image at x, y. Omit dimensions to use its natural size, or provide one dimension to preserve its aspect ratio.",
+          },
           line: {
             signature: "line(x1, y1, x2, y2)",
             description:
@@ -2121,6 +2126,11 @@ studio.start(draw)
           millis: {
             signature: "millis()",
             description: "Return elapsed milliseconds since the sketch started.",
+          },
+          loadImage: {
+            signature: "loadImage(name)",
+            description:
+              "Load an image by filename from the Added Images gallery. Use image() to draw the returned image.",
           },
           noFill: {
             signature: "noFill()",

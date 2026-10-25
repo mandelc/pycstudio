@@ -326,7 +326,7 @@
               <code>ellipse()</code>,
               <code>circle()</code>, <code>line()</code>, <code>point()</code>,
               <code>triangle()</code>, <code>quad()</code>, <code>millis()</code>,
-              <code>text()</code>,
+              <code>loadImage()</code>, <code>image()</code>, <code>text()</code>,
               and <code>textSize()</code>. Rectangles use a top-left position;
               by default, ellipses and circles use a center position.
               <code>circle(x, y, diameter)</code> takes a diameter, while
@@ -348,14 +348,21 @@
               <code>from processing_simulator import *</code>.
               <code>millis()</code> returns elapsed milliseconds since the
               sketch started.
+              <code>loadImage(name)</code> loads an image added to the project;
+              <code>image(img, x, y)</code> draws it at its natural size.
+              Optionally pass a width and height to scale it, or just one
+              dimension to preserve its aspect ratio.
             </p>
             <pre><code>import processing_simulator as p
 
 def setup():
+    global logo
     p.size(600, 300)
+    logo = p.loadImage("logo.png")
 
 def draw():
     p.background(255)
+    p.image(logo, 20, 20, 120)
     p.fill(255, 0, 0)
     p.noStroke()
     p.circle(p.mouseX, p.mouseY, 40)

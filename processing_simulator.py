@@ -16,6 +16,7 @@ __all__ = (
     "ellipseMode",
     "fill",
     "line",
+    "loadImage",
     "millis",
     "mouseX",
     "mouseY",
@@ -35,6 +36,7 @@ __all__ = (
     "triangle",
     "width",
     "height",
+    "image",
 )
 
 CORNER = "CORNER"
@@ -336,6 +338,30 @@ def line(x1, y1, x2, y2):
         _number(y2),
         stroke=_stroke_color,
         width=_stroke_weight,
+    )
+
+
+def loadImage(name):
+    """Load an image by its filename from the Added Images gallery."""
+    return studio.load_image(name)
+
+
+def image(image_object, x, y, image_width=None, image_height=None):
+    """Draw an image at x, y, optionally scaling it to the given dimensions."""
+    if image_width is None and image_height is None:
+        image_width = image_object.width
+        image_height = image_object.height
+    elif image_width is None:
+        image_width = image_object.width * image_height / image_object.height
+    elif image_height is None:
+        image_height = image_object.height * image_width / image_object.width
+
+    studio.image(
+        image_object,
+        _number(x),
+        _number(y),
+        _number(image_width),
+        _number(image_height),
     )
 
 
