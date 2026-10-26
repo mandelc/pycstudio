@@ -1653,6 +1653,7 @@ studio.start(draw)
         );
         const syntaxHighlight = document.getElementById("syntax-highlight");
         const projectTitle = document.getElementById("project-title");
+        projectTitle.value = `project_${Date.now()}`;
         const lineNumbers = document.getElementById("line-numbers");
         const functionHint = document.getElementById("function-hint");
         const functionHintSignature = document.getElementById(
@@ -2896,6 +2897,7 @@ studio.start(draw)
         }
 
         async function restoreWorkspace() {
+          const generatedProjectTitle = `project_${Date.now()}`;
           const controls = [
             editor,
             projectTitle,
@@ -2925,7 +2927,7 @@ studio.start(draw)
                 workspace.title ??
                 (currentFileName !== "drawing.py"
                   ? currentFileName.split(/[\\/]/).pop().replace(/\.pyw?$/i, "")
-                  : "Untitled");
+                  : generatedProjectTitle);
               updateLineNumbers();
               for (const savedAsset of workspace.images || []) {
                 const image = new Image();
@@ -2946,7 +2948,7 @@ studio.start(draw)
                   draft.title ??
                   (currentFileName !== "drawing.py"
                     ? currentFileName.split(/[\\/]/).pop().replace(/\.pyw?$/i, "")
-                    : "Untitled");
+                    : generatedProjectTitle);
                 updateLineNumbers();
               }
               await persistWorkspace();
@@ -4218,7 +4220,7 @@ studio.start(draw)
           for (const player of audioPlayers.values()) player.pause();
           editor.value = "";
           resetEditorHistory();
-          projectTitle.value = "Untitled";
+          projectTitle.value = `project_${Date.now()}`;
           currentFileName = "drawing.py";
           updateLineNumbers();
           imageAssets.clear();
